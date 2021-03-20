@@ -1,12 +1,13 @@
 package event
 
 import (
-	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 func FromYaml(files string, recursive bool) []Event {
@@ -16,7 +17,7 @@ func FromYaml(files string, recursive bool) []Event {
 		var event []Event
 		var err error
 		if pathName == "-" {
-			event, err = decode(os.Stdin)
+			event, err = Decode(os.Stdin)
 		} else {
 			event, err = read(pathName, recursive)
 		}
@@ -51,7 +52,7 @@ func readFile(pathName string) ([]Event, error) {
 		}
 	}()
 
-	return decode(file)
+	return Decode(file)
 }
 
 func readDir(pathName string, recursive bool) ([]Event, error) {
@@ -80,7 +81,8 @@ func readDir(pathName string, recursive bool) ([]Event, error) {
 	return events, nil
 }
 
-func decode(reader io.Reader) ([]Event, error) {
+// Decode converts a reader or YAML string into []Event
+func Decode(reader io.Reader) ([]Event, error) {
 	decoder := yaml.NewDecoder(reader)
 	events := make([]Event, 0)
 	var err error
